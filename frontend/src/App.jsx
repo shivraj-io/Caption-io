@@ -1,79 +1,59 @@
-// OLD CODE (commented out for reference):
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import { useState } from "react";
-// import Navbar from "./components/Navbar";
-// import Home from "./pages/Home";
-// function App() {
-//   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-//   return (
-//     <Router>
-//       <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-//       <Routes>
-//         <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
-//       </Routes>
-//     </Router>
-//   );
-// }
-
-// NEW CODE (production-level with proper routing):
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { authService } from "./services/auth.service";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Features from "./pages/Features";
+import Profile from "./pages/Profile";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(authService.isAuthenticated());
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check authentication status on mount
   useEffect(() => {
-    setIsLoggedIn(authService.isAuthenticated());
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+  };
 
   return (
     <Router>
-      <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-      <div className="pt-16">
+      <div className="min-h-screen bg-gray-50">
+        <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <Routes>
-          {/* Protected route - Home (post section) */}
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
-              isLoggedIn ? (
-                <Home isLoggedIn={isLoggedIn} />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            } 
+              isLoggedIn ? <Home isLoggedIn={isLoggedIn} /> : <Navigate to="/login" />
+            }
           />
-          
-          {/* Auth routes - redirect to home if already logged in */}
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
-              isLoggedIn ? (
-                <Navigate to="/" replace />
-              ) : (
-                <Login setIsLoggedIn={setIsLoggedIn} />
-              )
-            } 
+              !isLoggedIn ? <Login setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />
+            }
           />
-          
-          <Route 
-            path="/register" 
+          <Route
+            path="/register"
             element={
-              isLoggedIn ? (
-                <Navigate to="/" replace />
-              ) : (
-                <Register setIsLoggedIn={setIsLoggedIn} />
-              )
-            } 
+              !isLoggedIn ? <Register setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />
+            }
           />
-
-          {/* Catch all - redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/features" element={<Features />} />
+          <Route
+            path="/profile"
+            element={isLoggedIn ? <Profile /> : <Navigate to="/login" />}
+          />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
     </Router>

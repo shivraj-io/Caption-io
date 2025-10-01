@@ -1,18 +1,3 @@
-// OLD CODE (commented out for reference):
-// const mongoose = require('mongoose');
-// const postSchema = new mongoose.Schema({
-//   caption: String,
-//   image: String,
-//   userId: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'users'
-//   }
-// }, { timestamps: true });
-// const postModel = mongoose.model('posts', postSchema);
-// const userModel = mongoose.model('users', userSchema); // ❌ This line causes error
-// module.exports = postModel;
-
-// NEW CODE (production-level):
 const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema(
@@ -25,6 +10,10 @@ const postSchema = new mongoose.Schema(
     image: {
       type: String,
       required: true
+    },
+    imageKitFileId: {
+      type: String, // Store ImageKit file ID for easier deletion
+      required: false
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

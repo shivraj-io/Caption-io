@@ -1,41 +1,59 @@
 // NEW FILE - Authentication service layer
-import apiClient from './api.service';
-import { API_CONFIG } from '../config/api.config';
+const API_BASE_URL = 'http://localhost:3000/api';
 
 export const authService = {
   async register(username, email, password) {
     try {
-      const { data } = await apiClient.post(API_CONFIG.ENDPOINTS.AUTH.REGISTER, {
-        username,
-        email,
-        password
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
       });
-      if (data.token) {
-        localStorage.setItem('token', data.token);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed');
       }
+
       return data;
     } catch (error) {
-      throw error.response?.data || { message: 'Registration failed' };
+      throw error;
     }
   },
 
   async login(email, password) {
     try {
-      const { data } = await apiClient.post(API_CONFIG.ENDPOINTS.AUTH.LOGIN, {
-        email,
-        password
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       });
-      if (data.token) {
-        localStorage.setItem('token', data.token);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
       }
+
       return data;
     } catch (error) {
-      throw error.response?.data || { message: 'Login failed' };
+      throw error;
     }
   },
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  },
+
+  getCurrentUser() {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
   },
 
   getToken() {

@@ -13,7 +13,7 @@ export const API_CONFIG = {
       GET_ALL: '/api/posts',
       GET_BY_ID: (id) => `/api/posts/${id}`,
       DELETE: (id) => `/api/posts/${id}`,
-      GENERATE_CAPTION: '/api/posts/generate-caption'
+      GENERATE_CAPTION: '/api/posts/generate-caption' // ✅ This should be called
     }
   },
   TIMEOUT: 10000,
