@@ -6,8 +6,22 @@ require('dotenv').config();
 const app = express();
 
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.some(allowed => origin?.includes(allowed))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -47,6 +61,7 @@ app.get('/api/debug/routes', (req, res) => {
 // API Routes
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/posts', require('./routes/post.routes'));
+app.use('/api/contact', require('./routes/contact.routes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
