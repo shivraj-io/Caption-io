@@ -1,78 +1,134 @@
+// OLD CODE (commented out for reference):
+// const bcrypt = require('bcryptjs');
+// const jwt = require('jsonwebtoken');
+// const userModel = require('../models/user.model');
+// async function registerController(req, res) {
+//     const { username, password } = req.body;
+//     // ... rest of old code
+// }
+
+// NEW CODE (production-level with email support):
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user.model');
-const bcrypt = require('bcryptjs');
-require('dotenv').config();
 
 async function registerController(req, res) {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password are required' });
+    try {
+        console.log('Register request body:', req.body);
+        
+        const { username, email, password } = req.body;
+
+        // Validation
+        if (!username || !email || !password) {
+            return res.status(400).json({ 
+                message: 'Username, email, and password are required' 
+            });
+        }
+
+        // Check if user already exists
+        const existingUser = await userModel.findOne({ 
+            $or: [{ email }, { username }] 
+        });
+
+        if (existingUser) {
+            if (existingUser.email === email) {
+                return res.status(409).json({ message: 'Email already registered' });
+            }
+            if (existingUser.username === username) {
+                return res.status(409).json({ message: 'Username already taken' });
+            }
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create user
+        const user = await userModel.create({
+            username,
+            email,
+            password: hashedPassword
+        });
+
+        // Generate token
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+
+        return res.status(201).json({
+            message: 'User registered successfully',
+            token,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.error('Register error:', error);
+        return res.status(500).json({ 
+            message: 'Internal server error',
+            error: error.message 
+        });
     }
-
-    const existing = await userModel.findOne({ username });
-    if (existing) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    const hashed = await bcrypt.hash(password, 10);
-    const user = await userModel.create({ username, password: hashed });
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      // secure: true, // enable when using https
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    return res.status(201).json({ message: 'User registered successfully' });
-  } catch (err) {
-    console.error('Register error:', err);
-    return res.status(500).json({ message: 'Registration failed' });
-  }
 }
 
 async function loginController(req, res) {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password are required' });
+    try {
+        console.log('Login request body:', req.body);
+        
+        const { email, password } = req.body;
+
+        // Validation
+        if (!email || !password) {
+            return res.status(400).json({ 
+                message: 'Email and password are required' 
+            });
+        }
+
+        // Find user by email
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        // Generate token
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+
+        return res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({ 
+            message: 'Internal server error',
+            error: error.message 
+        });
     }
-
-    const user = await userModel.findOne({ username });
-    if (!user) {
-      return res.status(400).json({ message: 'User not found' });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Invalid password' });
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      // secure: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({
-      message: 'User login successful',
-      token,
-      user: {
-        username: user.username,
-        id: user._id,
-      },
-    });
-  } catch (err) {
-    console.error('Login error:', err);
-    return res.status(500).json({ message: 'Login failed' });
-  }
 }
 
 module.exports = {
-  registerController,
-  loginController,
+    registerController,
+    loginController
 };
