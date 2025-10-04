@@ -137,8 +137,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-600">support@caption-io.com</p>
-                    <p className="text-gray-600">hello@caption-io.com</p>
+                    <p className="text-gray-600">shivrajsinghr57@gmail.com</p>
                   </div>
                 </div>
 
@@ -150,8 +149,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">Phone</h3>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
-                    <p className="text-gray-600">Mon-Fri, 9am-6pm EST</p>
+                    <p className="text-gray-600">+91 9407469939</p>
+                    <p className="text-gray-600">Mon-Fri, 9am-6pm</p>
                   </div>
                 </div>
 
@@ -164,55 +163,76 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">Office</h3>
-                    <p className="text-gray-600">123 AI Street, Tech Valley</p>
-                    <p className="text-gray-600">San Francisco, CA 94102</p>
+                    <p className="text-gray-600">G-205 Ayushman Residency</p>
+                    <p className="text-gray-600">Silicon City, Indore</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Social Links */}
+            {/* Social Links with SVG Icons */}
             <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-xl p-8 text-white">
               <h2 className="text-2xl font-bold mb-6">Follow Us</h2>
-              <div className="flex space-x-4">
+              <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: '𝕏', label: 'Twitter' },
-                  { icon: '📘', label: 'Facebook' },
-                  { icon: '📷', label: 'Instagram' },
-                  { icon: '💼', label: 'LinkedIn' }
+                  { 
+                    iconPath: '/github.svg',
+                    label: 'GitHub',
+                    url: 'https://github.com/shivrajsingh2806',
+                    bgColor: 'bg-gray-800',
+                    hoverColor: 'hover:bg-gray-900'
+                  },
+                  { 
+                    iconPath: '/linkedin-svgrepo-com.svg',
+                    label: 'LinkedIn',
+                    url: 'https://www.linkedin.com/in/shivraj-singh-pipawad-518765250',
+                    bgColor: 'bg-blue-600',
+                    hoverColor: 'hover:bg-blue-700'
+                  },
+                  { 
+                    iconPath: '/instagram-svgrepo-com.svg',
+                    label: 'Instagram',
+                    url: 'https://www.instagram.com/shivraj._.banna_/',
+                    bgColor: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400',
+                    hoverColor: 'hover:from-purple-600 hover:via-pink-600 hover:to-orange-500'
+                  },
+                  { 
+                    iconPath: '/x.svg',
+                    label: 'X (Twitter)',
+                    url: 'https://x.com/shivraj_io',
+                    bgColor: 'bg-black',
+                    hoverColor: 'hover:bg-gray-900'
+                  }
                 ].map((social, idx) => (
-                  <button
+                  <a
                     key={idx}
-                    className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-4 transition-all text-2xl"
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${social.bgColor} ${social.hoverColor} rounded-xl p-6 transition-all duration-300 hover:shadow-2xl hover:scale-105 flex flex-col items-center justify-center text-center group`}
                     title={social.label}
                   >
-                    {social.icon}
-                  </button>
+                    <div className="w-12 h-12 mb-3 flex items-center justify-center">
+                      <img 
+                        src={social.iconPath} 
+                        alt={social.label}
+                        className="w-10 h-10 object-contain filter brightness-0 invert"
+                        onError={(e) => {
+                          console.error(`Failed to load icon: ${social.iconPath}`);
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-white">{social.label}</span>
+                  </a>
                 ))}
               </div>
-              <p className="mt-6 text-purple-100">
+              <p className="mt-6 text-purple-100 text-center">
                 Stay updated with our latest features and AI improvements
               </p>
             </div>
 
-            {/* FAQ Quick Links */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Quick Help</h2>
-              <div className="space-y-3">
-                <a href="#" className="block text-purple-600 hover:text-purple-800 font-medium">
-                  → How to generate captions?
-                </a>
-                <a href="#" className="block text-purple-600 hover:text-purple-800 font-medium">
-                  → Pricing & Plans
-                </a>
-                <a href="#" className="block text-purple-600 hover:text-purple-800 font-medium">
-                  → API Documentation
-                </a>
-                <a href="#" className="block text-purple-600 hover:text-purple-800 font-medium">
-                  → Privacy Policy
-                </a>
-              </div>
-            </div>
+          
           </div>
         </div>
       </div>

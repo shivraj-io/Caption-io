@@ -215,70 +215,72 @@ export default function Home({ isLoggedIn }) {
                   Create New Post
                 </h2>
                 
+                {/* Upload Component */}
                 <ImageUpload onUpload={handleImageUpload} />
                 
-                {/* ✅ Image Preview with View Full button */}
+                {/* ✅ Image Preview - Shows immediately after upload */}
                 {imagePreview && (
-                  <div className="mt-4 relative group">
-                    <img 
-                      src={imagePreview} 
-                      alt="Preview" 
-                      className="w-full h-auto rounded-lg shadow-md cursor-pointer"
-                      onClick={() => setSelectedPost({ image: imagePreview, caption: caption || 'Preview' })}
-                    />
-                    {/* Overlay with View Full button */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 rounded-lg flex items-center justify-center">
-                      <button
-                        onClick={() => setSelectedPost({ image: imagePreview, caption: caption || 'Preview' })}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium shadow-lg flex items-center space-x-2 hover:bg-indigo-50"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                        </svg>
-                        <span>View Full</span>
-                      </button>
+                  <div className="mt-4">
+                    <div className="relative rounded-lg overflow-hidden border-2 border-gray-200 shadow-md">
+                      <img 
+                        src={imagePreview} 
+                        alt="Uploaded preview" 
+                        className="w-full h-auto object-contain bg-gray-50"
+                        style={{ maxHeight: '400px' }}
+                      />
+                      
+                      {/* Loading Overlay - Only during caption generation */}
+                      {loading && (
+                        <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center">
+                          <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mb-4"></div>
+                          <p className="text-white text-sm font-medium">Generating caption...</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
+                {/* Success Message */}
                 {success && (
-                  <div className="mt-4 rounded-md bg-green-50 p-4">
+                  <div className="mt-4 rounded-md bg-green-50 p-4 border border-green-200">
                     <div className="flex">
-                      <div className="flex-shrink-0">
-                        <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm text-green-800">{success}</p>
-                      </div>
+                      <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <p className="ml-3 text-sm text-green-800 font-medium">{success}</p>
                     </div>
                   </div>
                 )}
 
+                {/* Error Message */}
                 {error && (
-                  <div className="mt-4 rounded-md bg-red-50 p-4">
+                  <div className="mt-4 rounded-md bg-red-50 p-4 border border-red-200">
                     <div className="flex">
-                      <div className="flex-shrink-0">
-                        <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm text-red-800">{error}</p>
-                      </div>
+                      <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                      <p className="ml-3 text-sm text-red-800">{error}</p>
                     </div>
                   </div>
                 )}
                 
-                <CaptionDisplay caption={caption} loading={loading} error={error} />
+                {/* Generated Caption Display */}
+                {caption && !loading && (
+                  <div className="mt-4 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Generated Caption:</h3>
+                    <p className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap">
+                      {caption}
+                    </p>
+                  </div>
+                )}
 
+                {/* Save Button */}
                 {caption && !loading && (
                   <div className="mt-6">
                     <button
                       onClick={handleSavePost}
                       disabled={saving}
-                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {saving ? (
                         <>
@@ -289,7 +291,12 @@ export default function Home({ isLoggedIn }) {
                           Saving to ImageKit...
                         </>
                       ) : (
-                        '💾 Save Post to ImageKit'
+                        <>
+                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                          </svg>
+                          💾 Save Post to ImageKit
+                        </>
                       )}
                     </button>
                   </div>
