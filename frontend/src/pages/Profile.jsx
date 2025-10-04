@@ -77,7 +77,7 @@ export default function Profile() {
                     <div className="text-2xl font-bold text-indigo-600">
                       {posts.reduce((acc, post) => acc + (post.caption?.length || 0), 0)}
                     </div>
-                    <div className="text-sm text-gray-600">Captions Generated</div>
+                    <div className="text-sm text-gray-600">Captions Length</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-indigo-600">Pro</div>
@@ -87,11 +87,7 @@ export default function Profile() {
               </div>
 
               {/* Edit Profile Button */}
-              <div className="mt-6 sm:mt-0">
-                <button className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                  Edit Profile
-                </button>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -218,9 +214,7 @@ export default function Profile() {
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
-                      <button className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                        Save Changes
-                      </button>
+                      
                     </div>
                   </div>
 

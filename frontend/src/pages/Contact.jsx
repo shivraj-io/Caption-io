@@ -178,7 +178,7 @@ export default function Contact() {
                   { 
                     iconPath: '/github.svg',
                     label: 'GitHub',
-                    url: 'https://github.com/shivrajsingh2806',
+                    url: 'https://github.com/shivraj-io',
                     bgColor: 'bg-gray-800',
                     hoverColor: 'hover:bg-gray-900'
                   },
